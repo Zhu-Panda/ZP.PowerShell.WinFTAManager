@@ -36,7 +36,7 @@ Function ZP-GetPTA
     )
     If ($Protocol)
     {
-        Write-Verbose "Get Protocol Type Association for $Protocol"
+        Write-Verbose "Get Protocol Type Association for `"$($Protocol)`""
         $AssocFile = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\$Protocol\UserChoice" -ErrorAction SilentlyContinue).ProgId
         Write-Output $AssocFile
     }
