@@ -100,3 +100,22 @@ Function ZP-GetPTA
         Write-Output (ZP-GetWinTypeAssoc -Type "" -Protocol)
     }
 }
+Function ZP-SetWinTypeAssoc
+{
+    [CmdletBinding(PositionalBinding = $False)]
+    Param
+    (
+        [Parameter(ParameterSetName = "Extension")]
+        [Switch]
+        $Extension,
+        [Parameter(ParameterSetName = "Protocol")]
+        [Switch]
+        $Protocol,
+        [Parameter(Position = 0, Mandatory)]
+        [Parameter(ParameterSetName = "Extension")]
+        [Parameter(ParameterSetName = "Protocol")]
+        [AllowEmptyString()]
+        [String]
+        $Type
+    )
+}
