@@ -28,20 +28,39 @@ Function ZP-GetWinTypeAssoc
     Write-Verbose "Getting from $($Type ? $AssocTypePath : $AssocListPath)"
     If ($Type)
     {
-        Write-Output @{$Type = (Get-ItemProperty $AssocTypePath -ErrorAction SilentlyContinue).ProgId}
+        If ($Extension)
+        {
+            Write-Output ([PSCustomObject] @{
+                Extension = $Type
+                ProgId = (Get-ItemProperty $AssocTypePath -ErrorAction SilentlyContinue).ProgId
+            })
+        }
+        Else
+        {
+            Write-Output ([PSCustomObject] @{
+                Protocol = $Type
+                ProgId = (Get-ItemProperty $AssocTypePath -ErrorAction SilentlyContinue).ProgId
+            })
+        }
     }
     Else
     {
         If ($Extension)
         {
             Write-Output (Get-ChildItem $AssocListPath | Where-Object -FilterScript {$_.PSChildName.StartsWith(".")} | ForEach-Object {
-                @{$_.PSChildName.Substring(1) = (Get-ItemProperty "$($_.PSParentPath)\$($_.PSChildName)\UserChoice" -ErrorAction SilentlyContinue).ProgId}
+                [PSCustomObject] @{
+                    Extension = $_.PSChildName.Substring(1)
+                    ProgId = (Get-ItemProperty "$($_.PSParentPath)\$($_.PSChildName)\UserChoice" -ErrorAction SilentlyContinue).ProgId
+                }
             })
         }
         Else
         {
             Write-Output (Get-ChildItem $AssocListPath | ForEach-Object {
-                @{$_.PSChildName = (Get-ItemProperty "$($_.PSParentPath)\$($_.PSChildName)\UserChoice" -ErrorAction SilentlyContinue).ProgId}
+                [PSCustomObject] @{
+                    Protocol = $_.PSChildName
+                    ProgId = (Get-ItemProperty "$($_.PSParentPath)\$($_.PSChildName)\UserChoice" -ErrorAction SilentlyContinue).ProgId
+                }
             })
         }
     }
@@ -57,13 +76,10 @@ Function ZP-GetFTA
     )
     If ($Extension)
     {
-        Write-Output ".$($Extension) => $((ZP-GetWinTypeAssoc -Type $Extension -Extension).Values[0])"
-    }
+        Write-Output (ZP-GetWinTypeAssoc -Type $Extension -Extension)
     Else
     {
-        Write-Output (ZP-GetWinTypeAssoc -Type "" -Extension | ForEach-Object {
-            ".$($_.Keys[0]) => $($_.Values[0])"
-        })
+        Write-Output (ZP-GetWinTypeAssoc -Type "" -Extension)
     }
 }
 Function ZP-GetPTA
@@ -77,12 +93,10 @@ Function ZP-GetPTA
     )
     If ($Protocol)
     {
-        Write-Output "$($Protocol) => $((ZP-GetWinTypeAssoc -Type $Protocol -Protocol).Values[0])"
+        Write-Output (ZP-GetWinTypeAssoc -Type $Protocol -Protocol)
     }
     Else
     {
-        Write-Output (ZP-GetWinTypeAssoc -Type "" -Protocol | ForEach-Object {
-            "$($_.Keys[0]) => $($_.Values[0])"
-        })
+        Write-Output (ZP-GetWinTypeAssoc -Type "" -Protocol)
     }
 }
