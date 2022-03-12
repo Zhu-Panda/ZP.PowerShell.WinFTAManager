@@ -114,8 +114,17 @@ Function ZP-SetWinTypeAssoc
         [Parameter(Position = 0, Mandatory)]
         [Parameter(ParameterSetName = "Extension")]
         [Parameter(ParameterSetName = "Protocol")]
-        [AllowEmptyString()]
         [String]
-        $Type
+        $Type,
+        [Parameter(Position = 1, Mandatory)]
+        [Parameter(ParameterSetName = "Extension")]
+        [Parameter(ParameterSetName = "Protocol")]
+        [String]
+        $ProgId,
+        [Parameter(Position = 2)]
+        [Parameter(ParameterSetName = "Extension")]
+        [Parameter(ParameterSetName = "Protocol")]
+        [String]
+        $Icon
     )
 }
