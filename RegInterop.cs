@@ -21,7 +21,7 @@ namespace ZP.PowerShell.WinFTAManager
             int ulOptions,
             int samDesired,
             out UIntPtr hkResult);
-        [DllImport("advapi32.dll", SetLastError=true, CharSet = CharSet.Unicode)]
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern uint RegDeleteKey(
             UIntPtr hKey,
             string subKey);
