@@ -510,3 +510,41 @@ Function ZP-SetWinTypeAssoc
     }
     Refresh-Registry
 }
+Function ZP-SetFTA
+{
+    Param
+    (
+        [Parameter(Position = 0, Mandatory)]
+        [String]
+        $Extension,
+        [Parameter(Position = 1, Mandatory)]
+        [String]
+        $ProgId,
+        [Parameter(Position = 2)]
+        [String]
+        $Icon
+    )
+    $TargetArgs = @{
+        Type = $Extension
+        ProgId = $ProgId
+    }
+    If ($Icon) {$TargetArgs.Icon = $Icon}
+    ZP-SetWinTypeAssoc -Extension @TargetArgs
+}
+Function ZP-SetPTA
+{
+    Param
+    (
+        [Parameter(Position = 0, Mandatory)]
+        [String]
+        $Protocol,
+        [Parameter(Position = 1, Mandatory)]
+        [String]
+        $ProgId
+    )
+    $TargetArgs = @{
+        Type = $Protocol
+        ProgId = $ProgId
+    }
+    ZP-SetWinTypeAssoc -Protocol @TargetArgs
+}
