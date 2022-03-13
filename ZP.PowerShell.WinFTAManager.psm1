@@ -143,8 +143,6 @@ Function ZP-SetWinTypeAssoc
         Catch
         {} 
     }
-      
-    
     Function Local:Set-Icon 
     {
         Param
@@ -168,8 +166,6 @@ Function ZP-SetWinTypeAssoc
             Write-Verbose "Write Reg Icon Fail"
         }
     }
-    
-    
     Function Local:Write-ExtensionKeys
     {
         Param
@@ -196,12 +192,14 @@ Function ZP-SetWinTypeAssoc
             {
                 Add-Type -Path $PSScriptRoot/RegInterop.cs
             }
-            Catch {}
+            Catch
+            {}
             Try
             {
                 [ZP.PowerShell.WinFTAManager.RegInterop]::DeleteKey($Key)
             }
-            Catch {} 
+            Catch
+            {} 
         } 
     
         Try
@@ -291,8 +289,8 @@ Function ZP-SetWinTypeAssoc
         $Now = [DateTime]::Now
         $DateTime = [DateTime]::New($Now.Year, $Now.Month, $Now.Day, $Now.Hour, $Now.Minute, 0)
         $FileTime = $DateTime.ToFileTime()
-        $Hi = ($FileTime -shr 32)
-        $Low = ($FileTime -band 0xFFFFFFFFL)
+        $Hi = ($FileTime -Shr 32)
+        $Low = ($FileTime -BAnd 0xFFFFFFFFL)
         $DateTimeHex = ($Hi.ToString("X8") + $Low.ToString("X8")).ToLower()
         Write-Output $DateTimeHex
     } 
@@ -317,13 +315,13 @@ Function ZP-SetWinTypeAssoc
                 [Int]
                 $iCount 
             )
-            If ($iValue -band 0x80000000)
+            If ($iValue -BAnd 0x80000000)
             {
-                Write-Output (( $iValue -shr $iCount) -bxor 0xFFFF0000)
+                Write-Output (($iValue -Shr $iCount) -BXor 0xFFFF0000)
             }
             Else
             {
-                Write-Output ($iValue -shr $iCount)
+                Write-Output ($iValue -Shr $iCount)
             }
         }
         Function Local:Get-Long
@@ -357,10 +355,10 @@ Function ZP-SetWinTypeAssoc
         [Byte[]] $BytesMD5 = $MD5.ComputeHash($BytesBaseInfo)
         
         $LengthBase = ($BaseInfo.Length * 2) + 2 
-        $Length = (($LengthBase -band 4) -le 1) + (Get-ShiftRight $LengthBase  2) - 1
+        $Length = (($LengthBase -BAnd 4) -Le 1) + (Get-ShiftRight $LengthBase 2) - 1
         $Base64Hash = ""
     
-        If ($Length -gt 1)
+        If ($Length -Gt 1)
         {
             $Map = @{
                 PDATA = 0;
@@ -384,8 +382,8 @@ Function ZP-SetWinTypeAssoc
             $Map.CACHE = 0
             $Map.OUTHASH1 = 0
             $Map.PDATA = 0
-            $Map.MD51 = (((Get-Long $BytesMD5) -bor 1) + 0x69FB0000L)
-            $Map.MD52 = ((Get-Long $BytesMD5 4) -bor 1) + 0x13DB0000L
+            $Map.MD51 = (((Get-Long $BytesMD5) -BOr 1) + 0x69FB0000L)
+            $Map.MD52 = ((Get-Long $BytesMD5 4) -BOr 1) + 0x13DB0000L
             $Map.INDEX = Get-ShiftRight ($Length - 2) 1
             $Map.COUNTER = $Map.INDEX + 1
             While ($Map.COUNTER)
@@ -464,8 +462,8 @@ Function ZP-SetWinTypeAssoc
             $Buffer.CopyTo($OutHash, 12)
         
             [Byte[]] $OutHashBase = @(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-            $HashValue1 = ((Get-Long $OutHash 8) -bxor (Get-Long $OutHash))
-            $HashValue2 = ((Get-Long $OutHash 12) -bxor (Get-Long $OutHash 4))
+            $HashValue1 = ((Get-Long $OutHash 8) -BXor (Get-Long $OutHash))
+            $HashValue2 = ((Get-Long $OutHash 12) -BXor (Get-Long $OutHash 4))
         
             $Buffer = [BitConverter]::GetBytes($HashValue1)
             $Buffer.CopyTo($OutHashBase, 0)
